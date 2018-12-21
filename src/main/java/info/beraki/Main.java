@@ -1,6 +1,14 @@
 package info.beraki;
 
 import com.google.gson.Gson;
+import io.sentry.Sentry;
+import io.sentry.SentryClient;
+import io.sentry.SentryClientFactory;
+import io.sentry.context.Context;
+import io.sentry.event.BreadcrumbBuilder;
+import io.sentry.event.Event;
+import io.sentry.event.EventBuilder;
+import io.sentry.event.UserBuilder;
 import org.json.JSONObject;
 import spark.Spark;
 
@@ -34,9 +42,14 @@ public class Main extends PostHandling {
                 LOGGER.info(port+"");
       }
 
+      SentryClient sentry = Sentry.init("https://7614f61011cd41f996320893d27fbf64@sentry.io/1283885");
 
-
-
+      EventBuilder eventBuilder= new EventBuilder();
+      eventBuilder.withServerName("Beraki");
+      eventBuilder.withLogger("This is my first log");
+      sentry.sendEvent(eventBuilder);
+      // This sends a simple event to Sentry.
+      sentry.sendMessage("This is a test");
 
       Spark.get("/posts/limit/:limit", (req, res) -> { // post/LIMIT
           String toReturn=null;
